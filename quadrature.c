@@ -1,3 +1,4 @@
+// ----------------------------------------- BASE CODE ----------------------------------------- //
 int b = 0; // reading the time for main loop to be run for 15s
 int c = 0; // memory for the time in mainloop
 
@@ -25,6 +26,21 @@ int repc = 1;   // repetition condition of PI controller
 int t0;         // memory of time for the Purpose of displaying the results
 int repeat = 0; // repeat indicator to only let the memory of time for the Purpose of displaying the results be updated once
 
+// ----------------------------------------- USER DEFINED  ----------------------------------------- //
+int enc1 = 0;
+int enc2 = 0;
+int enc2mem = 0;
+int encrep = 0;
+int countTot = 0;
+int countRecent = 0;
+float rpmRecent;
+int encoderdirect1 = 0;
+int encoderdirect2 = 0;
+
+
+
+
+//
 void setup()
 {
     // put your setup code here, to run on
@@ -43,6 +59,10 @@ void setup()
         analogWrite(3, 255); // changing the direction of motor's rotation
     }
     RPM = abs(RPM);
+
+    //configure digital outputs?
+    pinMode(X, INPUT);
+    pinMode(X, INPUT);
 }
 
 void loop()
@@ -68,6 +88,10 @@ void loop()
 
         s1 = digitalRead(7); // reading Chanel 1 of builtin encoder
         s2 = digitalRead(8); // reading Chanel 2 of builtin encoder
+        
+        enc1 = digitalRead(X); // reading Chanel 1 of user encoder
+        enc2 = digitalRead(X); // reading Chanel 1 of user encoder
+
         if (s1 != s2 && r == 0)
         {
             s = s + 1;     // counters for rpm that displyed every 5s
@@ -82,6 +106,21 @@ void loop()
             r = 0;         // this indicator wont let this condition, (sm1 == sm2), to be counted until the next condition, (sm1 != sm2), happens
         }
 
+
+        if (enc1 != enc2 && encrep == 0)
+        {
+            countTot++;
+            countRecent++;
+            encrep = 1;     
+        }
+
+        if (enc1 == enc2 && encrep == 1)
+        {
+            countTot++;
+            countRecent++;
+            encrep = 0;  
+        }
+        
         b = millis(); // updating time
         if (b % 100 <= 1 && repeat == 0)
         {
@@ -92,12 +131,18 @@ void loop()
         if (b % 100 == 0)
         {
             Serial.print("time in ms: ");
-            Serial.print(b - t0);
+            Serial.println(b - t0);
 
             Serial.print("  spontaneous speed from builtin encoder:  ");
             rpmm = (s_2 / (2 * 114)) * 600; // formulation for rpm in each 100ms for PI controller
             Serial.println(rpmm);
             s_2 = 0; // reseting the counters of PI controller rpm meter
+
+            Serial.print("  spontaneous speed from user encoder:  ");
+            rpmRecent = (countRecent / (2 * 114)) * 600; // formulation for rpm in each 100ms for PI controller
+            // --- WILL NEED TO DERIVE FORMULA FOR RPM RECENT ----- //
+            Serial.println(rpmRecent);
+            countRecent = 0; // reseting the counters of PI controller rpm meter
 
             if ((b - t0) % 5000 == 0)
             {
@@ -106,10 +151,11 @@ void loop()
                 Serial.println((s / (228)) * 12); // formula for rpm in each 5s
 
                 Serial.print("RPM from optical quadrature encoder: ");
-                Serial.println(0);
+                Serial.println((countTot / (228)) * 12); // formula for rpm in each 5s
+                // DERIVE FORMULA
 
                 Serial.print("Error: ");
-                Serial.println(-(s / (228)) * 12);
+                Serial.println((countTot / (228)) * 12-(s / (228)) * 12);
 
                 Serial.print("direction read by motor's sensor: ");
                 if (dirm == 0)
@@ -123,11 +169,22 @@ void loop()
                 Serial.print("  ,   ");
 
                 Serial.print("direction read by sensor:  ");
-                Serial.println("");
+                if (encoderdirect1 == 0)
+                {
+                    Serial.print("CW");
+                }
+                else
+                {
+                    Serial.print("CCW");
+                }
                 Serial.println();
 
                 s = 0;
                 directionm = 0;
+
+                countTot = 0;
+                encoderdirect2 = 0;
+
             }
             delay(1);
         }
@@ -151,6 +208,28 @@ void loop()
         if (directionm < 20)
         {
             dirm = 1;
+        }
+
+        //THIS COULD BE WAY SIMPLIFIED
+        if ((enc1 == HIGH) && (enc2 == HIGH) && (s2m == LOW)) // reading the direction of motor by cheaking which chanel follows which
+        {
+            encoderdirect2++;
+        }
+
+        if ((enc1 == LOW) && (enc2 == LOW) && (s2m == HIGH))
+        {
+            encoderdirect2++;
+        }
+
+        enc2mem = enc2; // memory of the previous builtin encoder chanel 2
+
+        if (encoderdirect2 > 100)
+        {
+            encoderdirect1 = 0;
+        }
+        if (encoderdirect2 < 20)
+        {
+            encoderdirect1 = 1;
         }
 
         b = millis(); // updating time

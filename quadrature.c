@@ -233,7 +233,7 @@ void loop()
             encoderdirect2++;
         }
 
-        if ((enc1 == 1) && (enc2 == 1) && (enc2mem == 1))
+        if ((enc1 == 0) && (enc2 == 0) && (enc2mem == 1))
         {
             encoderdirect2++;
         }

@@ -61,8 +61,20 @@ void setup()
     RPM = abs(RPM);
 
     //configure digital outputs?
-    pinMode(X, INPUT);
-    pinMode(X, INPUT);
+    pinMode(10, INPUT);
+    pinMode(11, INPUT);
+
+    enc1 = digitalRead(10); // reading Chanel 1 of user encoder
+    enc2 = digitalRead(11); // reading Chanel 1 of user encoder
+
+
+    //configure encrep
+    if (enc1 == enc2) {
+      encrep = 1;
+    }
+    else {
+      encrep = 0;      
+    }
 }
 
 void loop()
@@ -89,8 +101,8 @@ void loop()
         s1 = digitalRead(7); // reading Chanel 1 of builtin encoder
         s2 = digitalRead(8); // reading Chanel 2 of builtin encoder
         
-        enc1 = digitalRead(X); // reading Chanel 1 of user encoder
-        enc2 = digitalRead(X); // reading Chanel 1 of user encoder
+        enc1 = digitalRead(10); // reading Chanel 1 of user encoder
+        enc2 = digitalRead(11); // reading Chanel 1 of user encoder
 
         if (s1 != s2 && r == 0)
         {
@@ -139,9 +151,18 @@ void loop()
             s_2 = 0; // reseting the counters of PI controller rpm meter
 
             Serial.print("  spontaneous speed from user encoder:  ");
-            rpmRecent = (countRecent / (2 * 114)) * 600; // formulation for rpm in each 100ms for PI controller
+            rpmRecent = (float)600*countRecent/64; // formulation for rpm in each 100ms for PI controller
             // --- WILL NEED TO DERIVE FORMULA FOR RPM RECENT ----- //
             Serial.println(rpmRecent);
+
+            Serial.print(enc1);
+            Serial.print(" | ");
+            Serial.println(enc2);
+            Serial.print(encrep);
+            Serial.print(" | ");
+            Serial.println(countRecent);
+
+
             countRecent = 0; // reseting the counters of PI controller rpm meter
 
             if ((b - t0) % 5000 == 0)
@@ -151,11 +172,11 @@ void loop()
                 Serial.println((s / (228)) * 12); // formula for rpm in each 5s
 
                 Serial.print("RPM from optical quadrature encoder: ");
-                Serial.println((countTot / (228)) * 12); // formula for rpm in each 5s
+                Serial.println(12*(float)countTot/64);  // formula for rpm in each 5s
                 // DERIVE FORMULA
 
                 Serial.print("Error: ");
-                Serial.println((countTot / (228)) * 12-(s / (228)) * 12);
+                Serial.println((12*(float)countTot/64)-(12*(float)s/228 ));
 
                 Serial.print("direction read by motor's sensor: ");
                 if (dirm == 0)

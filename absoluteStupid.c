@@ -117,13 +117,13 @@ void loop()
         Serial.println(0);
 
         Serial.print("shaft displacement from optical absolute sensor: ");
-        Serial.println((float)count/ENCODER_SECTIONS);
+        Serial.println((float)count*360/ENCODER_SECTIONS);
 
         Serial.print("Shaft displacement from motor's builtin encoder: ");
         Serial.println(s * 360 / 228); // every full Revolution of the shaft is associated with 228 counts of builtin
                                        // encoder so to turn it to degre we can use this formula (s * 360 / 228), "s" is the number of  built-in encoder counts
 
-        float Error = (float)count/ENCODER_SECTIONS - s * 360 / 228;
+        float Error = (float)count*360/ENCODER_SECTIONS - s * 360 / 228;
         Serial.print("Error :");
         Serial.println(Error); // displaying error
         Serial.println();

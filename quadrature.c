@@ -238,6 +238,10 @@ void loop()
             encoderdirect2++;
         }
 
+        if (enc1 == enc2 && enc2 != enc2mem) {
+            encoderdirect2++;
+        }
+
         enc2mem = enc2; // memory of the previous builtin encoder chanel 2
 
         if (encoderdirect2 > 100)

@@ -19,9 +19,8 @@ int rep = 1;    // Repetition indicator
 #define ENCODER_SECTIONS 32
 #define CW 0
 #define CCW 1
-int zeroPos;
-int currentPos;
-int previousPos;
+int zeroPos, currentPos, previousPos;
+float currentAngle;
 int encoders[5];
 int expectedDirection = CW;
 
@@ -47,8 +46,13 @@ void setup()
     }
     deg = abs(deg);
 
-    pinMode(10, INPUT); //2 pin attempt
-    pinMode(11, INPUT);
+    pinMode(9, INPUT); 
+    pinMode(10, INPUT);
+    pinMode(11, INPUT); 
+    pinMode(12, INPUT);
+    pinMode(13, INPUT); 
+
+    zeroPosition(); //
 }
 
 float kp = .6 * 90 / deg; // proportional gain of PI
@@ -105,22 +109,26 @@ void loop()
 
         readEncoders();
         currentPos = grayCodetoDec(encoders);
-
+        currentAngle = relativeAngle(currentPos, previousPos);
+        
+        Serial.print("current position number: ");
+        Serial.println(currentPos);
+        Serial.print("previous position number: ");
+        Serial.println(previousPos);
 
         Serial.print("shaft position from optical absolute sensor from home position: ");
         Serial.println(absoluteAngle(currentPos));
 
         Serial.print("shaft displacement from optical absolute sensor: ");
-        Serial.println(currentPos - previousPos);
+        Serial.println(currentAngle);
 
         Serial.print("Shaft displacement from motor's builtin encoder: ");
         Serial.println(s * 360 / 228); // every full Revolution of the shaft is associated with 228 counts of builtin
                                        // encoder so to turn it to degre we can use this formula (s * 360 / 228), "s" is the number of  built-in encoder counts
 
-        float Error = currentPos - previousPos - s * 360 / 228;
+        float Error = currentAngle - s * 360 / 228;
         Serial.print("Error :");
         Serial.println(Error); // displaying error
-        Serial.println();
 
         Serial.print("direction expected: ");
             if (expectedDirection == CW)
@@ -143,6 +151,7 @@ void loop()
                 Serial.print("CCW");
             }
         Serial.println();
+        Serial.println();
 
         previousPos = currentPos; //update previousPos
 
@@ -159,33 +168,51 @@ int grayCodetoDec(int *gray) {
     //convert gray code to binary
     int binary[5];
     binary[4] = gray[4];
-    for (int i = 4; i >= 0; i-- ) { 
+    Serial.print(binary[4]);
+    Serial.print("    ");
+    for (int i = 3; i >= 0; i-- ) { 
         binary[i] = gray[i] ^ binary[i+1];
+        Serial.print(binary[i]);
+        Serial.print("    ");
     }
+    Serial.println();
 
     //convert to decimal
-    int decimal;
+    int decimal = 0;
     for (int i = 0; i<= 4; i++ ) {
-        decimal+= binary[i]*pow(2, i); //powers of 2
+        decimal = decimal + ceil(binary[i]*pow(2, i)); //powers of 2
+        Serial.print(binary[i]*pow(2, i));
+        Serial.print("    ");
     }
-
+    Serial.print(decimal);
+    Serial.println();
     return decimal;
 }
 
 void readEncoders(void) {
-    encoders[0] = digitalRead(X);
-    encoders[1] = digitalRead(X);
-    encoders[2] = digitalRead(X);
-    encoders[3] = digitalRead(X);
-    encoders[4] = digitalRead(X);
+    encoders[0] = digitalRead(9);
+    encoders[1] = digitalRead(10);
+    encoders[2] = digitalRead(11);
+    encoders[3] = digitalRead(12);
+    encoders[4] = digitalRead(13);
+
+    for (int i = 4; i >= 0; i-- ) { 
+        
+        Serial.print(encoders[i]);
+        Serial.print("    ");
+    }
+    Serial.println();
 
     return encoders;
 }
 
-void zeroPosition(void) {
+void zeroPosition() {
     readEncoders(); 
     zeroPos = grayCodetoDec(encoders); //zero value
     previousPos = zeroPos;
+
+    Serial.print("Zero position");
+    Serial.println(zeroPos);
 }
 
 float absoluteAngle(int position) {
@@ -193,6 +220,16 @@ float absoluteAngle(int position) {
     if (absPos < 0) { absPos+= 32; } //if less than zero
 
     float absAngle = (float)absPos*360/ENCODER_SECTIONS;
+    return absAngle;
+}
+
+float relativeAngle(int currentPosition, int previousPosition) {
+    int relPos = currentPosition - previousPosition; 
+    // if (relPos < 0) { relPos+= 32; } //if less than zero
+
+    float relAngle = (float)relPos*360/ENCODER_SECTIONS;
+    if (relAngle >= 180) {relAngle = 360 - relAngle; }
+    return abs(relAngle);
 
 }
 

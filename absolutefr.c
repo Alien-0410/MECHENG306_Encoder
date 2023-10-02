@@ -25,6 +25,26 @@ int encoders[5];
 int expectedDirection = CW;
 
 
+/*light values
+ALL BLACK 
+834.00    569.00    791.00    730.00    861.00    
+834.00    569.00    791.00    730.00    861.00  
+
+ALL WHITES
+337.00    68.00    255.00    56.00    469.00    
+337.00    68.00    255.00    56.00    468.00    
+*/
+
+#define t4h 800
+#define t4l 400
+#define t3h 500
+#define t3l 100
+#define t2h 700
+#define t2l 300
+#define t1h 700
+#define t1l 100
+#define t0h 800
+#define t0l 500
 
 void setup()
 {
@@ -244,3 +264,44 @@ int direction(float initial, float final) {
     }
     return direction; 
 }
+
+int analogueToDigital(int transistorVal, int transistorNum){
+  switch(transistorNum)
+  {
+    case 4:
+      if(transistorVal>t4h){
+        return 0;   //return white
+      }else if(transistorVal<t4l){
+        return 1;   //return black
+      }
+
+    case 3:
+      if(transistorVal>t3h){
+        return 0;   //return white
+      }else if(transistorVal<t3l){
+        return 1;   //return black
+      }
+
+    case 2:
+      if(transistorVal>t2h){
+        return 0;   //return white
+      }else if(transistorVal<t2l){
+        return 1;   //return black
+      }
+
+    case 1:
+      if(transistorVal>t1h){
+        return 0;   //return white
+      }else if(transistorVal<t1l){
+        return 1;   //return black
+      }
+
+    case 0:
+      if(transistorVal>t0h){
+        return 0;   //return white
+      }else if(transistorVal<t0l){
+        return 1;   //return black
+      }
+  }
+}
+

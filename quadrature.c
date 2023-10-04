@@ -61,11 +61,11 @@ void setup()
     RPM = abs(RPM);
 
     //configure digital outputs?
+    pinMode(9, INPUT);
     pinMode(10, INPUT);
-    pinMode(11, INPUT);
 
-    enc1 = digitalRead(10); // reading Chanel 1 of user encoder
-    enc2 = digitalRead(11); // reading Chanel 1 of user encoder
+    enc1 = digitalRead(9); // reading Chanel 1 of user encoder
+    enc2 = digitalRead(10); // reading Chanel 1 of user encoder
 
 
     //configure encrep
@@ -90,7 +90,7 @@ void loop()
         {
             eri = ki * (RPM - rpmm) + eri;
             ctrl = 50 + kp * (RPM - rpmm) + eri;
-            analogWrite(6, ctrl);
+            analogWrite(1, ctrl);
             repc = 0;
         }
         if (b % 13 == 1)
@@ -101,8 +101,8 @@ void loop()
         s1 = digitalRead(7); // reading Chanel 1 of builtin encoder
         s2 = digitalRead(8); // reading Chanel 2 of builtin encoder
         
-        enc1 = digitalRead(10); // reading Chanel 1 of user encoder
-        enc2 = digitalRead(11); // reading Chanel 1 of user encoder
+        enc1 = digitalRead(9); // reading Chanel 1 of user encoder
+        enc2 = digitalRead(10); // reading Chanel 1 of user encoder
 
         if (s1 != s2 && r == 0)
         {
@@ -158,9 +158,9 @@ void loop()
             Serial.print(enc1);
             Serial.print(" | ");
             Serial.println(enc2);
-            Serial.print(encrep);
+            Serial.print(countRecent);
             Serial.print(" | ");
-            Serial.println(countRecent);
+            Serial.println(countTot);
 
 
             countRecent = 0; // reseting the counters of PI controller rpm meter

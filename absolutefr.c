@@ -131,10 +131,10 @@ void loop()
         currentPos = grayCodetoDec(encoders);
         currentAngle = relativeAngle(currentPos, previousPos);
         
-        Serial.print("current position number: ");
-        Serial.println(currentPos);
-        Serial.print("previous position number: ");
-        Serial.println(previousPos);
+        // Serial.print("current position number: ");
+        // Serial.println(currentPos);
+        // Serial.print("previous position number: ");
+        // Serial.println(previousPos);
 
         Serial.print("shaft position from optical absolute sensor from home position: ");
         Serial.println(absoluteAngle(currentPos));
@@ -188,24 +188,24 @@ int grayCodetoDec(int *gray) {
     //convert gray code to binary
     int binary[5];
     binary[4] = gray[4];
-    Serial.print(binary[4]);
-    Serial.print("    ");
+    // Serial.print(binary[4]);
+    // Serial.print("    ");
     for (int i = 3; i >= 0; i-- ) { 
         binary[i] = gray[i] ^ binary[i+1];
-        Serial.print(binary[i]);
-        Serial.print("    ");
+        // Serial.print(binary[i]);
+        // Serial.print("    ");
     }
-    Serial.println();
+    // Serial.println();
 
     //convert to decimal
     int decimal = 0;
     for (int i = 0; i<= 4; i++ ) {
         decimal = decimal + ceil(binary[i]*pow(2, i)); //powers of 2
-        Serial.print(binary[i]*pow(2, i));
-        Serial.print("    ");
+        // Serial.print(binary[i]*pow(2, i));
+        // Serial.print("    ");
     }
-    Serial.print(decimal);
-    Serial.println();
+    // Serial.print(decimal);
+    // Serial.println();
     return decimal;
 }
 
@@ -216,12 +216,13 @@ void readEncoders(void) {
     encoders[3] = digitalRead(12);
     encoders[4] = digitalRead(13);
 
-    for (int i = 4; i >= 0; i-- ) { 
+    // debugging lines
+    // for (int i = 4; i >= 0; i-- ) { 
         
-        Serial.print(encoders[i]);
-        Serial.print("    ");
-    }
-    Serial.println();
+    //     Serial.print(encoders[i]);
+    //     Serial.print("    ");
+    // }
+    // Serial.println();
 
     return encoders;
 }
@@ -231,8 +232,8 @@ void zeroPosition() {
     zeroPos = grayCodetoDec(encoders); //zero value
     previousPos = zeroPos;
 
-    Serial.print("Zero position");
-    Serial.println(zeroPos);
+    // Serial.print("Zero position");
+    // Serial.println(zeroPos);
 }
 
 float absoluteAngle(int position) {
@@ -248,20 +249,20 @@ float relativeAngle(int currentPosition, int previousPosition) {
     // if (relPos < 0) { relPos+= 32; } //if less than zero
 
     float relAngle = (float)relPos*360/ENCODER_SECTIONS;
-    if (relAngle >= 180) {relAngle = 360 - relAngle; }
+    if (abs(relAngle) >= 180) {relAngle = 360 - abs(relAngle); }
     return abs(relAngle);
 
 }
 
 int direction(float initial, float final) {
     int direction;
-    if (abs(final - initial) < 120) { //if less than 90 degrees moved
-        if (final > initial) { direction = CW; }
-        else { direction = CCW; }
-    } else { //passed by 0 
+    if (abs(final - initial) < 16) { //if less than 90 degrees moved
+      if (final > initial) { direction = CW; }
+      else { direction = CCW; }
+    } 
+    else { //passed by 0 
         if (final > initial) { direction = CCW; }
-        else { direction = CW; }
-    }
+        else { direction = CW; }}
     return direction; 
 }
 
@@ -304,4 +305,3 @@ int analogueToDigital(int transistorVal, int transistorNum){
       }
   }
 }
-

@@ -204,8 +204,8 @@ int grayCodetoDec(int *gray) {
         // Serial.print(binary[i]*pow(2, i));
         // Serial.print("    ");
     }
-    // Serial.print(decimal);
-    // Serial.println();
+    Serial.print(decimal);
+    Serial.println();
     return decimal;
 }
 
@@ -217,12 +217,12 @@ void readEncoders(void) {
     encoders[4] = digitalRead(13);
 
     // debugging lines
-    // for (int i = 4; i >= 0; i-- ) { 
+    for (int i = 4; i >= 0; i-- ) { 
         
-    //     Serial.print(encoders[i]);
-    //     Serial.print("    ");
-    // }
-    // Serial.println();
+         Serial.print(encoders[i]);
+         Serial.print("    ");
+    }
+    Serial.println();
 
     return encoders;
 }

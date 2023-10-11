@@ -37,10 +37,10 @@ float rpmRecent;
 int encoderdirect1 = 0;
 int encoderdirect2 = 0;
 
-int lowenc1 = 320;
-int highenc1 = 680;
-int lowenc2 = 400;
-int highenc2 = 600;
+int lowenc1 = 320+50;
+int highenc1 = 680-50;
+int lowenc2 = 400+50;
+int highenc2 = 600-50;
 int read1, read2;
 
 //

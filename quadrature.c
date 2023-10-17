@@ -37,8 +37,11 @@ float rpmRecent;
 int encoderdirect1 = 0;
 int encoderdirect2 = 0;
 
-
-
+int lowenc1 = 320+50;
+int highenc1 = 680-50;
+int lowenc2 = 400+50;
+int highenc2 = 600-50;
+int read1, read2;
 
 //
 void setup()
@@ -61,11 +64,11 @@ void setup()
     RPM = abs(RPM);
 
     //configure digital outputs?
-    pinMode(10, INPUT);
+    pinMode(9, INPUT);
     pinMode(11, INPUT);
 
-    enc1 = digitalRead(10); // reading Chanel 1 of user encoder
-    enc2 = digitalRead(11); // reading Chanel 1 of user encoder
+    enc1 = analogRead(A4); // reading Chanel 1 of user encoder
+    enc2 = analogRead(A2); // reading Chanel 1 of user encoder
 
 
     //configure encrep
@@ -101,8 +104,11 @@ void loop()
         s1 = digitalRead(7); // reading Chanel 1 of builtin encoder
         s2 = digitalRead(8); // reading Chanel 2 of builtin encoder
         
-        enc1 = digitalRead(10); // reading Chanel 1 of user encoder
-        enc2 = digitalRead(11); // reading Chanel 1 of user encoder
+        read1 = analogRead(A4); // reading Chanel 1 of user encoder
+        read2 = analogRead(A2); // reading Chanel 1 of user encoder
+
+        enc1 = analogToDig(read1, enc1, lowenc1, highenc1);
+        enc2 = analogToDig(read2, enc2, lowenc2, highenc2);
 
         if (s1 != s2 && r == 0)
         {
@@ -158,9 +164,9 @@ void loop()
             Serial.print(enc1);
             Serial.print(" | ");
             Serial.println(enc2);
-            Serial.print(encrep);
+            Serial.print(countRecent);
             Serial.print(" | ");
-            Serial.println(countRecent);
+            Serial.println(countTot);
 
 
             countRecent = 0; // reseting the counters of PI controller rpm meter
@@ -232,23 +238,22 @@ void loop()
         }
 
         //THIS COULD BE WAY SIMPLIFIED
-        if ((enc1 == HIGH) && (enc2 == HIGH) && (s2m == LOW)) // reading the direction of motor by cheaking which chanel follows which
+        if ((enc1 == HIGH) && (enc2 == HIGH) && (enc2mem == LOW)) // reading the direction of motor by cheaking which chanel follows which
         {
             encoderdirect2++;
         }
 
-        if ((enc1 == LOW) && (enc2 == LOW) && (s2m == HIGH))
+        if ((enc1 == LOW) && (enc2 == LOW) && (enc2mem == HIGH))
         {
             encoderdirect2++;
         }
 
-        if (enc1 == enc2 && enc2 != enc2mem) {
-            encoderdirect2++;
-        }
+        // if (enc1 == enc2 && enc2 != enc2mem) {
+        //     encoderdirect2++;
+        // }
 
         enc2mem = enc2; // memory of the previous builtin encoder chanel 2
-
-        if (encoderdirect2 > 100)
+        if (encoderdirect2 > 150)
         {
             encoderdirect1 = 0;
         }
@@ -261,4 +266,15 @@ void loop()
     }
     analogWrite(6, 0); // turning off the motor
     exitt = 1;         // changing the exit condition to prevent the motor to run after 15s
+}
+
+int analogToDig(int reading, int digLast, int low, int high){
+  if (reading > high){
+    return 1;
+  }
+  else if (reading < low){
+    return 0;
+  }
+  else 
+    return digLast;
 }

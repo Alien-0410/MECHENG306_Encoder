@@ -1,0 +1,60 @@
+Enter the desired rotation in degree.
+shaft position from optical absolute sensor from home position: 326.25
+shaft displacement from optical absolute sensor: 33.75
+Shaft displacement from motor's builtin encoder: 26.84
+Error :6.91
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 315.00
+shaft displacement from optical absolute sensor: 11.25
+Shaft displacement from motor's builtin encoder: 22.11
+Error :-10.86
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 281.25
+shaft displacement from optical absolute sensor: 33.75
+Shaft displacement from motor's builtin encoder: 28.42
+Error :5.33
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 247.50
+shaft displacement from optical absolute sensor: 33.75
+Shaft displacement from motor's builtin encoder: 25.26
+Error :8.49
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 225.00
+shaft displacement from optical absolute sensor: 22.50
+Shaft displacement from motor's builtin encoder: 23.68
+Error :-1.18
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 202.50
+shaft displacement from optical absolute sensor: 22.50
+Shaft displacement from motor's builtin encoder: 26.84
+Error :-4.34
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 180.00
+shaft displacement from optical absolute sensor: 22.50
+Shaft displacement from motor's builtin encoder: 25.26
+Error :-2.76
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 146.25
+shaft displacement from optical absolute sensor: 33.75
+Shaft displacement from motor's builtin encoder: 23.68
+Error :10.07
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 123.75
+shaft displacement from optical absolute sensor: 22.50
+Shaft displacement from motor's builtin encoder: 25.26
+Error :-2.76
+direction expected: CW  ,   direction read by absolute sensor:  CW
+
+shaft position from optical absolute sensor from home position: 112.50
+shaft displacement from optical absolute sensor: 11.25
+Shaft displacement from motor's builtin encoder: 23.68
+Error :-12.43
+direction expected: CW  ,   direction read by absolute sensor:  CW

@@ -35,16 +35,16 @@ ALL WHITES
 337.00    68.00    255.00    56.00    468.00    
 */
 
-#define t4h 800
-#define t4l 400
-#define t3h 500
-#define t3l 100
-#define t2h 700
-#define t2l 300
-#define t1h 700
-#define t1l 100
-#define t0h 800
-#define t0l 500
+#define ENC4HI 800
+#define ENC4LO 400
+#define ENC3HI 500
+#define ENC3LO 100
+#define ENC2HI 700
+#define ENC2LO 300
+#define ENC1HI 700
+#define ENC1LO 100
+#define ENC0HI 800
+#define ENC0LO 500
 
 void setup()
 {

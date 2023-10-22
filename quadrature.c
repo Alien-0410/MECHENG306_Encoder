@@ -236,14 +236,7 @@ void loop()
             dirm = 1;
         }
 
-        //THIS COULD BE WAY SIMPLIFIED
-        if ((enc1 == HIGH) && (enc2 == HIGH) && (enc2mem == LOW)) // reading the direction of motor by cheaking which chanel follows which
-        {
-            encoderdirect2++;
-        }
-
-        if ((enc1 == LOW) && (enc2 == LOW) && (enc2mem == HIGH))
-        {
+        if (enc1 == enc2 && enc2 != enc2mem) {
             encoderdirect2++;
         }
 

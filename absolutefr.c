@@ -19,32 +19,11 @@ int rep = 1;    // Repetition indicator
 #define ENCODER_SECTIONS 32
 #define CW 0
 #define CCW 1
-int zeroPos, currentPos, previousPos;
-float currentAngle;
-int encoders[5];
-int expectedDirection = CW;
+int zeroPos, currentPos, previousPos; // positions from 0-31
+float currentAngle;                   // angle in degrees
+int encoders[5];                      //storing encoder values
+int expectedDirection = CW;           // for comparing to recorded direction
 
-
-/*light values
-ALL BLACK 
-834.00    569.00    791.00    730.00    861.00    
-834.00    569.00    791.00    730.00    861.00  
-
-ALL WHITES
-337.00    68.00    255.00    56.00    469.00    
-337.00    68.00    255.00    56.00    468.00    
-*/
-
-#define ENC4HI 800
-#define ENC4LO 400
-#define ENC3HI 500
-#define ENC3LO 100
-#define ENC2HI 700
-#define ENC2LO 300
-#define ENC1HI 700
-#define ENC1LO 100
-#define ENC0HI 800
-#define ENC0LO 500
 
 void setup()
 {
@@ -131,10 +110,13 @@ void loop()
         currentPos = grayCodetoDec(encoders);
         currentAngle = relativeAngle(currentPos, previousPos);
         
-        // Serial.print("current position number: ");
-        // Serial.println(currentPos);
-        // Serial.print("previous position number: ");
-        // Serial.println(previousPos);
+        // Position debugging 
+        /*
+        Serial.print("current position number: ");
+        Serial.println(currentPos);
+        Serial.print("previous position number: ");
+        Serial.println(previousPos); 
+        */
 
         Serial.print("shaft position from optical absolute sensor from home position: ");
         Serial.println(absoluteAngle(currentPos));
@@ -188,24 +170,14 @@ int grayCodetoDec(int *gray) {
     //convert gray code to binary
     int binary[5];
     binary[4] = gray[4];
-    // Serial.print(binary[4]);
-    // Serial.print("    ");
     for (int i = 3; i >= 0; i-- ) { 
-        binary[i] = gray[i] ^ binary[i+1];
-        // Serial.print(binary[i]);
-        // Serial.print("    ");
+        binary[i] = gray[i] ^ binary[i+1];  
     }
-    // Serial.println();
-
-    //convert to decimal
+   
     int decimal = 0;
     for (int i = 0; i<= 4; i++ ) {
         decimal = decimal + ceil(binary[i]*pow(2, i)); //powers of 2
-        // Serial.print(binary[i]*pow(2, i));
-        // Serial.print("    ");
     }
-    Serial.print(decimal);
-    Serial.println();
     return decimal;
 }
 
@@ -217,21 +189,20 @@ void readEncoders(void) {
     encoders[4] = digitalRead(13);
 
     // debugging lines
-    for (int i = 4; i >= 0; i-- ) { 
+    /*
+     for (int i = 4; i >= 0; i-- ) { 
         
          Serial.print(encoders[i]);
          Serial.print("    ");
     }
     Serial.println();
-
-    return encoders;
+    */
 }
 
 void zeroPosition() {
     readEncoders(); 
     zeroPos = grayCodetoDec(encoders); //zero value
     previousPos = zeroPos;
-
     // Serial.print("Zero position");
     // Serial.println(zeroPos);
 }
@@ -246,15 +217,14 @@ float absoluteAngle(int position) {
 
 float relativeAngle(int currentPosition, int previousPosition) {
     int relPos = currentPosition - previousPosition; 
-    // if (relPos < 0) { relPos+= 32; } //if less than zero
 
     float relAngle = (float)relPos*360/ENCODER_SECTIONS;
-    if (abs(relAngle) >= 180) {relAngle = 360 - abs(relAngle); }
+    if (abs(relAngle) >= 180) {relAngle = 360 - abs(relAngle); } //ensure between -180 and 180
     return abs(relAngle);
 
 }
 
-int direction(float initial, float final) {
+int direction(int initial, int final) {
     int direction;
     if (abs(final - initial) < 16) { //if less than 90 degrees moved
       if (final > initial) { direction = CW; }
@@ -264,44 +234,4 @@ int direction(float initial, float final) {
         if (final > initial) { direction = CCW; }
         else { direction = CW; }}
     return direction; 
-}
-
-int analogueToDigital(int transistorVal, int transistorNum){
-  switch(transistorNum)
-  {
-    case 4:
-      if(transistorVal>t4h){
-        return 0;   //return white
-      }else if(transistorVal<t4l){
-        return 1;   //return black
-      }
-
-    case 3:
-      if(transistorVal>t3h){
-        return 0;   //return white
-      }else if(transistorVal<t3l){
-        return 1;   //return black
-      }
-
-    case 2:
-      if(transistorVal>t2h){
-        return 0;   //return white
-      }else if(transistorVal<t2l){
-        return 1;   //return black
-      }
-
-    case 1:
-      if(transistorVal>t1h){
-        return 0;   //return white
-      }else if(transistorVal<t1l){
-        return 1;   //return black
-      }
-
-    case 0:
-      if(transistorVal>t0h){
-        return 0;   //return white
-      }else if(transistorVal<t0l){
-        return 1;   //return black
-      }
-  }
 }

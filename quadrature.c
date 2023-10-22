@@ -27,17 +27,18 @@ int t0;         // memory of time for the Purpose of displaying the results
 int repeat = 0; // repeat indicator to only let the memory of time for the Purpose of displaying the results be updated once
 
 // ----------------------------------------- USER DEFINED  ----------------------------------------- //
-int enc1 = 0;
-int enc2 = 0;
-int enc2mem = 0;
-int encrep = 0;
-int countTot = 0;
-int countRecent = 0;
-float rpmRecent;
-int encoderdirect1 = 0;
+int enc1 = 0;               //1st encoder chanel
+int enc2 = 0;               //2nd encoder chanel
+int enc2mem = 0;            //memory for direction
+int encrep = 0;             //for making sure we dont repeat counts
+int countTot = 0;           //5s count
+int countRecent = 0;        //instantaneous count
+float rpmRecent;            //convert to rpm
+int encoderdirect1 = 0;     //direction variables
 int encoderdirect2 = 0;
 
-int lowenc1 = 320+50;
+// voltage thresholds
+int lowenc1 = 320+50;      
 int highenc1 = 680-50;
 int lowenc2 = 400+50;
 int highenc2 = 600-50;
@@ -124,7 +125,7 @@ void loop()
             r = 0;         // this indicator wont let this condition, (sm1 == sm2), to be counted until the next condition, (sm1 != sm2), happens
         }
 
-
+        //user defined (essentially repeating basecode)
         if (enc1 != enc2 && encrep == 0)
         {
             countTot++;
@@ -158,7 +159,6 @@ void loop()
 
             Serial.print("  spontaneous speed from user encoder:  ");
             rpmRecent = (float)600*countRecent/64; // formulation for rpm in each 100ms for PI controller
-            // --- WILL NEED TO DERIVE FORMULA FOR RPM RECENT ----- //
             Serial.println(rpmRecent);
 
             Serial.print(enc1);
@@ -167,7 +167,6 @@ void loop()
             Serial.print(countRecent);
             Serial.print(" | ");
             Serial.println(countTot);
-
 
             countRecent = 0; // reseting the counters of PI controller rpm meter
 
@@ -248,10 +247,6 @@ void loop()
             encoderdirect2++;
         }
 
-        // if (enc1 == enc2 && enc2 != enc2mem) {
-        //     encoderdirect2++;
-        // }
-
         enc2mem = enc2; // memory of the previous builtin encoder chanel 2
         if (encoderdirect2 > 150)
         {
@@ -269,12 +264,12 @@ void loop()
 }
 
 int analogToDig(int reading, int digLast, int low, int high){
-  if (reading > high){
+  if (reading > high){ 
     return 1;
   }
   else if (reading < low){
     return 0;
   }
-  else 
+  else //ambiguous reading
     return digLast;
 }
